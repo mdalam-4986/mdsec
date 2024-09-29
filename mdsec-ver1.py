@@ -125,6 +125,7 @@ def main_menu():
 ┃┃┃┏┛┏┛┏┛┃┃  ┃ ┃ ┃┣ ┃┃ ┃ 
 ┛ ┗┗┛┗┛┗┛┗┻  ┗┛┗┛┻┗┛┛┗ ┻ 
 created by mdalam-4986
+version 1
 
 Main Menu
 1. DDoS
