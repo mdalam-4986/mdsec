@@ -1,0 +1,8 @@
+colorama
+subprocess
+os
+time
+shutil
+socket
+requests
+# Add any other modules you need
