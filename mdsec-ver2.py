@@ -1,4 +1,4 @@
-##!/usr/bin/env python3
+#!/usr/bin/env python3
 import subprocess
 import os
 import time
@@ -30,7 +30,7 @@ def print_centered(text):
 logo = """
 ------------------------------------
 ┳┳┓┏┓┏┓┏┓┏┓  ┏┓┓ ┳┏┓┳┓┏┳┓
-┃┃┃┏┛┏┛┏┛┃┃  ┃ ┃ ┃┣ ┃┃ ┃ 
+┃┃┃┏┛┏┛┏┛┃┃  ┃ ┃ ┃┣ ┃┃ ┃
   ┛ ┗┗┛┗┛┗┛┗┻  ┗┛┗┛┻┗┛┛┗ ┻ v2
 created by mdalam-4986
 and iamgeo1
@@ -221,29 +221,24 @@ def main_menu():
             geo_info = ip_toolkit.ip_geolocation(ip_to_check)
             print(Fore.LIGHTGREEN_EX + geo_info + Style.RESET_ALL)
             wait_for_user()
-
         elif choice == '2':
-            clone_and_run('https://github.com/jaykali/maskphish.git', 'MaskPhish', 'maskphish.sh')
-
+            clone_and_run("https://github.com/jaykali/maskphish.git", "maskphish", "maskphish.sh")
+            wait_for_user()
         elif choice == '3':
-            clone_and_run('https://github.com/htr-tech/zphisher.git', 'ZPhisher', 'zphisher.sh')
-
+            clone_and_run("https://github.com/htr-tech/zphisher.git", "zphisher", "zphisher.sh")
+            wait_for_user()
         elif choice == '4':
-            clone_and_run('https://github.com/techchipnet/CamPhish.git', 'CamPhish', 'camphish.sh')
-
+            clone_and_run("https://github.com/techchipnet/CamPhish.git", "CamPhish", "camphish.sh")
+            wait_for_user()
         elif choice == '5':
             ddos_function()
-
         elif choice == '6':
             port_scanner()
-
         elif choice == '7':
-            print_centered("Exiting program...")
+            print_centered("Exiting the application.")
             break
-
         else:
-            print_centered("Invalid choice. Please try again.")
-            wait_for_user()
+            print_centered("Invalid choice, please select a valid option.")
 
 if __name__ == "__main__":
     main_menu()
