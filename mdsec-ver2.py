@@ -31,7 +31,7 @@ logo = """
 ------------------------------------
  ┳┳┓┏┓┏┓┏┓┏┓  ┏┓┓ ┳┏┓┳┓┏┳┓
 ┃┃┃┏┛┏┛┏┛┃┃  ┃ ┃ ┃┣ ┃┃ ┃
-  ┛ ┗┗┛┗┛┗┛┗┻  ┗┛┗┛┻┗┛┛┗ ┻ v2
+   ┛ ┗┗┛┗┛┗┛┗┻  ┗┛┗┛┻┗┛┛┗ ┻ v2
 created by mdalam-4986
 and iamgeo1
 
@@ -43,6 +43,9 @@ Make a Selection:
 5. DDoS Attack
 6. Port Scanner
 7. Exit
+
+-More feautures coming soon-
+mdsec-ver2.py (beta)
 ------------------------------------
 """
 
