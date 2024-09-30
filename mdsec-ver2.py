@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+##!/usr/bin/env python3
 import subprocess
 import os
 import time
@@ -15,9 +15,8 @@ import threading
 # Initialize colorama
 init()
 
-def clear_console(except_art=False):
-    if not except_art:
-        os.system('clear')  # Clear the console
+def clear_console():
+    os.system('clear')  # Clear the console
 
 def center_text(text):
     terminal_width = shutil.get_terminal_size().columns
@@ -29,25 +28,40 @@ def print_centered(text):
 
 # ASCII Art Logo
 logo = """
+------------------------------------
 ┳┳┓┏┓┏┓┏┓┏┓  ┏┓┓ ┳┏┓┳┓┏┳┓
 ┃┃┃┏┛┏┛┏┛┃┃  ┃ ┃ ┃┣ ┃┃ ┃ 
   ┛ ┗┗┛┗┛┗┛┗┻  ┗┛┗┛┻┗┛┛┗ ┻ v2
 created by mdalam-4986
 and iamgeo1
+
+Make a Selection: 
+1. IP Toolkit
+2. MaskPhish
+3. ZPhisher
+4. CamPhish
+5. DDoS Attack
+6. Port Scanner
+7. Exit
+------------------------------------
 """
 
 # Function to clone and run a git repository
-def clone_and_run(repo_url, dir_name):
+def clone_and_run(repo_url, dir_name, script_name):
     if not os.path.exists(dir_name):
         print_centered(f"Cloning {repo_url}...")
-        subprocess.run(['git', 'clone', repo_url])
+        result = subprocess.run(['git', 'clone', repo_url], capture_output=True, text=True)
+        if result.returncode != 0:
+            print_centered(f"Error cloning repository: {result.stderr.strip()}")
+            return
     
     os.chdir(dir_name)
-    # Assuming there's a start.sh or similar script to run the tool
-    if os.path.isfile('start.sh'):
-        subprocess.run(['bash', 'start.sh'])
+    # Run the specified script
+    if os.path.isfile(script_name):
+        print_centered(f"Running {script_name}...")
+        subprocess.run(['bash', script_name])
     else:
-        print_centered("No start.sh file found. Please check the repository.")
+        print_centered(f"No {script_name} file found. Please check the repository.")
     os.chdir('..')  # Change back to the original directory
 
 # DDoS Functionality
@@ -106,8 +120,6 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         parsed_path = urlparse(self.path)
         if parsed_path.path.startswith('/redirect/'):
             user_ip = self.client_address[0]
-            print(f"Redirecting {user_ip}...")
-            geolocation_info = self.get_geolocation(user_ip)
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
@@ -115,9 +127,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             <html>
                 <body>
                     <h1>Your IP: {user_ip}</h1>
-                    <h2>Geolocation Information:</h2>
-                    <pre>{geolocation_info}</pre>
-                    <h3>Redirecting to: {parsed_path.path[10:]}</h3>
+                    <h3>Redirecting...</h3>
                 </body>
             </html>
             """
@@ -125,22 +135,6 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_response(302)
             self.send_header('Location', parsed_path.path[10:])
             self.end_headers()
-        else:
-            self.send_response(404)
-            self.end_headers()
-
-    def get_geolocation(self, ip):
-        try:
-            ip_obj = ipaddress.ip_address(ip)
-            if ip_obj.is_private:
-                return "Local IP addresses do not have geolocation information."
-            else:
-                response = requests.get(f"https://ipinfo.io/{ip}/json")
-                data = response.json()
-                formatted_data = json.dumps(data, indent=4)
-                return formatted_data
-        except Exception as e:
-            return f"Failed to retrieve geolocation information: {str(e)}"
 
 def run_server(port=8000):
     server_address = ('', port)
@@ -191,7 +185,6 @@ class IPToolkit:
             else:
                 response = requests.get(f"https://ipinfo.io/{ip}/json")
                 data = response.json()
-                address = data.get('hostname', 'Unknown') + ', ' + data.get('city', 'Unknown') + ', ' + data.get('region', 'Unknown') + ', ' + data.get('country', 'Unknown')
                 formatted_data = {
                     "IP": ip,
                     "Hostname": data.get('hostname', 'N/A'),
@@ -199,65 +192,58 @@ class IPToolkit:
                     "Region": data.get('region', 'N/A'),
                     "Country": data.get('country', 'N/A'),
                     "Location": data.get('loc', 'N/A'),
-                    "Postal": data.get('postal', 'N/A'),
-                    "Address": address
+                    "Organization": data.get('org', 'N/A'),
                 }
-                self.add_latest_info(f"Geolocation Information for {ip}: {formatted_data}")
+                self.add_latest_info(f"Geolocation data for {ip}: {formatted_data}")
                 return json.dumps(formatted_data, indent=4)
         except Exception as e:
-            message = f"Failed to retrieve geolocation information: {str(e)}"
-            self.add_latest_info(message)
-            return json.dumps({"Error": message}, indent=4)
+            return f"Error retrieving geolocation data: {str(e)}"
 
 def wait_for_user():
-    input(Fore.RED + "Press Enter to continue..." + Style.RESET_ALL)
+    input(Fore.LIGHTYELLOW_EX + "Press Enter to continue..." + Style.RESET_ALL)
 
 def main_menu():
-    clear_console()
-    print_centered(logo)
-    
     while True:
-        print_centered("Select an option:")
-        print_centered("1. IP Toolkit")
-        print_centered("2. MaskPhish")
-        print_centered("3. ZPhisher")
-        print_centered("4. CamPhish")
-        print_centered("5. DDoS Attack")
-        print_centered("6. Port Scanner")
-        print_centered("7. Exit")
+        clear_console()
+        print_centered(logo)
+        choice = input(Fore.RED + "Choose an option: " + Style.RESET_ALL)
+        if choice == '1':
+            print_centered("Launching IP Toolkit...")
+            time.sleep(1)  # Simulate some loading time
+            start_server_thread()
+            ip_toolkit = IPToolkit()
+            ip_toolkit.get_local_ip()
+            public_ip = ip_toolkit.get_public_ip()
+            print(Fore.LIGHTGREEN_EX + ip_toolkit.get_latest_info() + Style.RESET_ALL)
 
-        choice = input(Fore.RED + "Enter choice: " + Style.RESET_ALL)
+            # Prompt for geolocation
+            ip_to_check = input(Fore.RED + "Enter an IP address to find its location: " + Style.RESET_ALL)
+            geo_info = ip_toolkit.ip_geolocation(ip_to_check)
+            print(Fore.LIGHTGREEN_EX + geo_info + Style.RESET_ALL)
+            wait_for_user()
 
-        if choice == "1":
-            toolkit = IPToolkit()
-            print_centered("Local IP: " + toolkit.get_local_ip())
-            print_centered("Public IP: " + toolkit.get_public_ip())
-            ip_to_geo = input(Fore.RED + "Enter IP to get geolocation: " + Style.RESET_ALL)
-            print_centered("Geolocation Info: " + toolkit.ip_geolocation(ip_to_geo))
+        elif choice == '2':
+            clone_and_run('https://github.com/jaykali/maskphish.git', 'MaskPhish', 'maskphish.sh')
 
-        elif choice == "2":
-            clone_and_run("https://github.com/yourusername/maskphish.git", "maskphish")
+        elif choice == '3':
+            clone_and_run('https://github.com/htr-tech/zphisher.git', 'ZPhisher', 'zphisher.sh')
 
-        elif choice == "3":
-            clone_and_run("https://github.com/yourusername/zphisher.git", "zphisher")
+        elif choice == '4':
+            clone_and_run('https://github.com/techchipnet/CamPhish.git', 'CamPhish', 'camphish.sh')
 
-        elif choice == "4":
-            clone_and_run("https://github.com/yourusername/camphish.git", "camphish")
-
-        elif choice == "5":
+        elif choice == '5':
             ddos_function()
 
-        elif choice == "6":
+        elif choice == '6':
             port_scanner()
 
-        elif choice == "7":
-            print_centered("Exiting...")
+        elif choice == '7':
+            print_centered("Exiting program...")
             break
 
         else:
             print_centered("Invalid choice. Please try again.")
+            wait_for_user()
 
 if __name__ == "__main__":
-    start_server_thread()  # Start the HTTP server
     main_menu()
-
