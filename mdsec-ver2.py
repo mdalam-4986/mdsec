@@ -297,12 +297,7 @@ def main_menu():
             clone_and_run("https://github.com/htr-tech/zphisher.git", "zphisher", "zphisher.sh")
             wait_for_user()
         elif choice == '4':
-            # Directly run the local CamPhish tool
-            if os.path.isfile('camphish-tool.sh'):
-                print_centered("Running camphish-tool.sh...")
-                subprocess.run(['bash', 'camphish-tool.sh'])
-            else:
-                print_centered("camphish-tool.sh not found!")
+            clone_and_run("https://github.com/techchipnet/CamPhish.git, "camphish", "camphish.sh")
             wait_for_user()
         elif choice == '5':
             ddos_function()
