@@ -297,7 +297,7 @@ def main_menu():
             clone_and_run("https://github.com/htr-tech/zphisher.git", "zphisher", "zphisher.sh")
             wait_for_user()
         elif choice == '4':
-            clone_and_run("https://github.com/techchipnet/CamPhish.git", "camphish", "camphish.sh")
+            clone_and_run("https://github.com/techchipnet/CamPhish.git", "CamPhish", "camphish.sh")
             wait_for_user()
         elif choice == '5':
             ddos_function()
