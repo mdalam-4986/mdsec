@@ -53,13 +53,38 @@ mdsec-ver2.py (beta)
 # Function to clone and run a git repository
 def clone_and_run(repo_url, dir_name, script_name):
     if not os.path.exists(dir_name):
-        print_centered(f"Cloning {repo_url}...")
+        print_centered(f"Cloning {repo_url} into {dir_name}...")
         result = subprocess.run(['git', 'clone', repo_url], capture_output=True, text=True)
+        
+        # Check if cloning succeeded
         if result.returncode != 0:
             print_centered(f"Error cloning repository: {result.stderr.strip()}")
             return
+        
+        # Check if the directory was created
+        if not os.path.exists(dir_name):
+            print_centered(f"Error: Directory '{dir_name}' not found after cloning. Please check if it cloned correctly.")
+            return
     
-    os.chdir(dir_name)
+    # Debug statement to print the directory name
+    print_centered(f"Changing to directory: {dir_name}")
+    
+    try:
+        os.chdir(dir_name)
+    except FileNotFoundError as e:
+        print_centered(f"Error: {e}. Could not find directory '{dir_name}'.")
+        return
+    
+    # Run the specified script if it exists
+    if os.path.isfile(script_name):
+        print_centered(f"Running {script_name}...")
+        subprocess.run(['bash', script_name])
+    else:
+        print_centered(f"No {script_name} file found. Please check the repository.")
+    
+    # Change back to the original directory
+    os.chdir('..')
+
     # Run the specified script
     if os.path.isfile(script_name):
         print_centered(f"Running {script_name}...")
